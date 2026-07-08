@@ -1,0 +1,37 @@
+name: Yusuf YILMAZ APK Builder
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu Klonla
+        uses: actions/checkout@v3
+
+      - name: Python Kurulumu
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Java Kurulumu
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Bağımlılıkları Yükle
+        run: |
+          pip install flet yt-dlp
+          sudo apt-get update
+          sudo apt-get install -y ninja-build cmake
+
+      - name: APK Derle
+        run: |
+          git config --global --add safe.directory /opt/hostedtoolcache/flutter
+          flet build apk --project "Yusuf YILMAZ Indirici" --org "com.yusufyilmaz.downloader"
+
+      - name: APK Dosyasını Çıkar
+        uses: actions/upload-artifact@v4
+        with:
+          name: Yusuf_Yilmaz_Indirici_APK
+          path: build/apk/*.apk
